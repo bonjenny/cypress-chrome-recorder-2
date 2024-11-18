@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/cypress-io/cypress-chrome-recorder#readme",
   "dependencies": {
-    "@puppeteer/replay": "^2.10.2",
+    "@puppeteer/replay": "^2.13.4",
     "chalk": "^5.0.1",
     "execa": "^6.1.0",
     "globby": "^13.1.1",
@@ -47,6 +47,7 @@
     "chai": "^4.3.6",
     "commitizen": "^4.2.5",
     "cz-conventional-changelog": "^3.3.0",
+    "esbuild": "^0.24.0",
     "husky": "^7.0.4",
     "mocha": "^9.2.2",
     "ts-node": "^10.9.1",

@@ -120,7 +120,6 @@ export class CypressStringifyExtension extends StringifyExtension {
     if (cySelector) {
       out.appendLine(`${cySelector}.trigger("mouseover");`);
     }
-
   }
 
   #appendKeyDownStep(out: LineWriter, step: Schema.KeyDownStep): void {
@@ -173,22 +172,29 @@ function handleSelectors(
   selectors: Schema.Selector[],
   flow?: Schema.UserFlow
 ): string | undefined {
-  // Remove Aria selectors in favor of DOM selectors
   const nonAriaSelectors = filterArrayByString(selectors, 'aria/');
   let preferredSelector;
 
-  // Give preference to user-specified selectors
   if (flow?.selectorAttribute) {
     preferredSelector = filterArrayByString(
       nonAriaSelectors,
       flow.selectorAttribute
     );
   }
-  if (preferredSelector && preferredSelector[0]) {
-    return `cy.get(${formatAsJSLiteral(preferredSelector[0][0])})`;
-  } else {
-    return `cy.get(${formatAsJSLiteral(nonAriaSelectors[0][0])})`;
+
+  const primarySelector = preferredSelector?.[0] || nonAriaSelectors[0];
+  if (primarySelector && /\d+$/.test(primarySelector[0])) {
+    const parentSelector = selectors.find((selector) =>
+      !/\d+$/.test(selector[0])
+    );
+    if (parentSelector) {
+      return `cy.get(${formatAsJSLiteral(parentSelector[0])}).find(${formatAsJSLiteral(
+        primarySelector[0]
+      )})`;
+    }
   }
+
+  return `cy.get(${formatAsJSLiteral(primarySelector?.[0] || '')})`;
 }
 
 function assertAllValidStepTypesAreHandled(step: Schema.Step): void {
